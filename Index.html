@@ -168,49 +168,49 @@
 
     <section class="mt-5" aria-label="Frequently Asked Questions">
       <h2 class="h5 mb-3">FAQs</h2>
-
+      
       <div class="faq-item">
         <button aria-controls="faq1" type="button">What is Sukanya Samriddhi Yojana (SSY)?</button>
         <div id="faq1" class="faq-answer">
           Sukanya Samriddhi Yojana (SSY) is a government-backed savings scheme launched to encourage parents to save for their girl child's future education and marriage. It offers attractive interest rates along with tax benefits under Section 80C.
         </div>
       </div>
-
+      
       <div class="faq-item">
         <button aria-controls="faq2" type="button">Who is eligible to open an SSY account?</button>
         <div id="faq2" class="faq-answer">
           A parent or guardian can open an SSY account in the name of their girl child below 10 years of age. Only one account is allowed per girl child.
         </div>
       </div>
-
+      
       <div class="faq-item">
         <button aria-controls="faq3" type="button">What is the tenure and maturity period of SSY?</button>
         <div id="faq3" class="faq-answer">
           The account matures 21 years from the date of opening or upon the marriage of the girl after she turns 18 years, whichever is earlier.
         </div>
       </div>
-
+      
       <div class="faq-item">
         <button aria-controls="faq4" type="button">What are the deposit limits?</button>
         <div id="faq4" class="faq-answer">
           Minimum deposit is ₹250 per year. Maximum deposits allowed are ₹1,50,000 per year (or ₹12,500 per month if depositing monthly). Deposits can be made in lump sum or installments.
         </div>
       </div>
-
+      
       <div class="faq-item">
         <button aria-controls="faq5" type="button">What is the interest rate and how is it calculated?</button>
         <div id="faq5" class="faq-answer">
           The interest rate is set by the government quarterly and is compounded annually. Interest is calculated on the minimum balance between the 5th and last day of each month.
         </div>
       </div>
-
+      
       <div class="faq-item">
         <button aria-controls="faq6" type="button">Can the account be closed early?</button>
         <div id="faq6" class="faq-answer">
           Partial or full withdrawal before maturity is allowed only under specific circumstances such as higher education or marriage of the girl after she reaches 18 years of age.
         </div>
       </div>
-
+      
       <div class="faq-item">
         <button aria-controls="faq7" type="button">Are the deposits and interest tax-free?</button>
         <div id="faq7" class="faq-answer">
@@ -375,13 +375,26 @@
       document.getElementById('results').style.display = 'block';
     });
 
-    // Download result button logic
+    // Download result button logic with dark mode fix and higher quality
     document.getElementById('downloadResult').addEventListener('click', () => {
       const resultSection = document.getElementById('results');
-      html2canvas(resultSection).then(canvas => {
+
+      // Save original styles
+      const originalBg = resultSection.style.backgroundColor;
+      const originalColor = resultSection.style.color;
+
+      // Apply dark mode styles explicitly for capture
+      resultSection.style.backgroundColor = '#121212';
+      resultSection.style.color = '#f0f0f0';
+
+      html2canvas(resultSection, { scale: 2 }).then(canvas => {
+        // Revert styles
+        resultSection.style.backgroundColor = originalBg;
+        resultSection.style.color = originalColor;
+
         const link = document.createElement('a');
         link.download = 'ssy-maturity-summary.png';
-        link.href = canvas.toDataURL();
+        link.href = canvas.toDataURL('image/png');
         link.click();
       });
     });

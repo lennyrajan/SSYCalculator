@@ -6,7 +6,7 @@
   <title>Sukanya Samriddhi Yojana (SSY) Maturity Calculator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -74,6 +74,7 @@
       color: inherit;
       border-bottom: 1px solid #ccc;
       transition: background-color 0.3s;
+      text-align: left;
     }
     .faq-answer {
       display: none;
@@ -85,7 +86,15 @@
     }
     #shareSection {
       margin-top: 1.5rem;
-      display: none;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    #shareSection a,
+    #shareSection button {
+      flex: 1 1 auto;
+      min-width: 100px;
+      text-align: center;
     }
     footer {
       position: fixed;
@@ -159,58 +168,57 @@
       <canvas id="growthChart" height="140"></canvas>
 
       <div id="shareSection" class="mt-4">
-        <h2 class="h6">Share your results</h2>
-        <a id="whatsappShare" class="btn btn-success me-2" target="_blank" rel="noopener">📱 WhatsApp</a>
-        <a id="xShare" class="btn btn-dark me-2" target="_blank" rel="noopener">𝕏 Share</a>
-        <button id="downloadResult" class="btn btn-outline-primary me-2">📥 Download Result</button>
+        <a id="whatsappShare" class="btn btn-success" target="_blank" rel="noopener">📱 WhatsApp</a>
+        <a id="xShare" class="btn btn-dark" target="_blank" rel="noopener">𝕏 Share</a>
+        <button id="downloadResult" class="btn btn-secondary">⬇️ Download Results</button>
       </div>
     </section>
 
     <section class="mt-5" aria-label="Frequently Asked Questions">
       <h2 class="h5 mb-3">FAQs</h2>
-      
+
       <div class="faq-item">
         <button aria-controls="faq1" type="button">What is Sukanya Samriddhi Yojana (SSY)?</button>
         <div id="faq1" class="faq-answer">
           Sukanya Samriddhi Yojana (SSY) is a government-backed savings scheme launched to encourage parents to save for their girl child's future education and marriage. It offers attractive interest rates along with tax benefits under Section 80C.
         </div>
       </div>
-      
+
       <div class="faq-item">
         <button aria-controls="faq2" type="button">Who is eligible to open an SSY account?</button>
         <div id="faq2" class="faq-answer">
           A parent or guardian can open an SSY account in the name of their girl child below 10 years of age. Only one account is allowed per girl child.
         </div>
       </div>
-      
+
       <div class="faq-item">
         <button aria-controls="faq3" type="button">What is the tenure and maturity period of SSY?</button>
         <div id="faq3" class="faq-answer">
           The account matures 21 years from the date of opening or upon the marriage of the girl after she turns 18 years, whichever is earlier.
         </div>
       </div>
-      
+
       <div class="faq-item">
         <button aria-controls="faq4" type="button">What are the deposit limits?</button>
         <div id="faq4" class="faq-answer">
           Minimum deposit is ₹250 per year. Maximum deposits allowed are ₹1,50,000 per year (or ₹12,500 per month if depositing monthly). Deposits can be made in lump sum or installments.
         </div>
       </div>
-      
+
       <div class="faq-item">
         <button aria-controls="faq5" type="button">What is the interest rate and how is it calculated?</button>
         <div id="faq5" class="faq-answer">
           The interest rate is set by the government quarterly and is compounded annually. Interest is calculated on the minimum balance between the 5th and last day of each month.
         </div>
       </div>
-      
+
       <div class="faq-item">
         <button aria-controls="faq6" type="button">Can the account be closed early?</button>
         <div id="faq6" class="faq-answer">
           Partial or full withdrawal before maturity is allowed only under specific circumstances such as higher education or marriage of the girl after she reaches 18 years of age.
         </div>
       </div>
-      
+
       <div class="faq-item">
         <button aria-controls="faq7" type="button">Are the deposits and interest tax-free?</button>
         <div id="faq7" class="faq-answer">
@@ -234,24 +242,36 @@
     const investmentTooltip = document.querySelector('label[for="investmentAmount"] .tooltip-icon');
     let chart;
 
+    // Update tooltip on investment type change
     function updateTooltip() {
       const type = document.querySelector('input[name="investmentType"]:checked').value;
-      investmentTooltip.title = type === 'monthly' ? "Monthly max ₹12,500" : "Yearly max ₹1,50,000";
+      if (type === 'monthly') {
+        investmentTooltip.title = "Monthly max ₹12,500";
+      } else {
+        investmentTooltip.title = "Yearly max ₹1,50,000";
+      }
     }
-    document.querySelectorAll('input[name="investmentType"]').forEach(radio => radio.addEventListener('change', updateTooltip));
+    document.querySelectorAll('input[name="investmentType"]').forEach(radio => {
+      radio.addEventListener('change', updateTooltip);
+    });
     updateTooltip();
 
+    // Theme toggle logic
     themeToggle.addEventListener('click', () => {
       document.body.classList.toggle('light-mode');
       document.body.classList.toggle('dark-mode');
       themeToggle.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
     });
 
-    faqButtons.forEach(btn => btn.addEventListener('click', () => {
-      const answer = document.getElementById(btn.getAttribute('aria-controls'));
-      answer.classList.toggle('show');
-    }));
+    // FAQ toggle logic
+    faqButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const answer = document.getElementById(btn.getAttribute('aria-controls'));
+        answer.classList.toggle('show');
+      });
+    });
 
+    // Calculation and chart logic
     form.addEventListener('submit', (e) => {
       e.preventDefault();
 
@@ -262,6 +282,7 @@
       const startYear = Math.min(2099, Math.max(2000, parseInt(document.getElementById('startYear').value) || new Date().getFullYear()));
       const investmentYears = Math.min(15, Math.max(0, parseInt(document.getElementById('investmentYears').value) || 0));
 
+      // Validate investment amount limits
       const monthlyMax = 12500;
       const yearlyMax = 150000;
       if ((investmentType === 'monthly' && investmentAmountRaw > monthlyMax) ||
@@ -270,11 +291,14 @@
         return;
       }
 
+      // Compute annual investment based on type
       const annualInvestment = investmentType === 'monthly' ? investmentAmountRaw * 12 : investmentAmountRaw;
+
       const maturityYear = startYear + 21;
       const currentYear = new Date().getFullYear();
       const yearsLeft = maturityYear - currentYear;
 
+      // Accumulators
       let total = currentBalance;
       let totalInvested = currentBalance;
       let totalInterest = 0;
@@ -295,6 +319,7 @@
         yearlyInterests.push(totalInterest.toFixed(2));
       }
 
+      // Update summary and detailed results
       summary.textContent = `Estimated maturity amount by ${maturityYear} is ₹${Math.round(total).toLocaleString()}.`;
 
       detailedResults.innerHTML = `
@@ -305,6 +330,7 @@
         <li><strong>Total Maturity Amount:</strong> ₹${Math.round(total).toLocaleString()}</li>
       `;
 
+      // Render chart
       if (chart) chart.destroy();
 
       chart = new Chart(chartCanvas, {
@@ -335,14 +361,17 @@
           plugins: { legend: { position: 'top' } },
           scales: {
             y: {
-              ticks: { callback: value => '₹' + Number(value).toLocaleString() },
+              ticks: {
+                callback: value => '₹' + Number(value).toLocaleString()
+              },
               beginAtZero: true
             }
           }
         }
       });
 
-      shareSection.style.display = 'block';
+      // Show share section
+      shareSection.style.display = 'flex';
 
       const shareText = `SSY Maturity by ${maturityYear}: ₹${Math.round(total).toLocaleString()}`;
       const shareURL = encodeURIComponent(window.location.href);
@@ -350,29 +379,30 @@
       document.getElementById('whatsappShare').href = `https://wa.me/?text=${encodeURIComponent(shareText)}%20${shareURL}`;
       document.getElementById('xShare').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${shareURL}`;
 
+      // Show results section
       document.getElementById('results').style.display = 'block';
     });
 
+    // Download results button logic
     document.getElementById('downloadResult').addEventListener('click', () => {
       const resultSection = document.getElementById('results');
       const shareButtonsContainer = document.getElementById('shareSection');
 
-      // Save original styles
+      // Hide the share buttons visually but keep layout stable
+      shareButtonsContainer.style.visibility = 'hidden';
+
+      // Force dark mode colors for capture
       const originalBg = resultSection.style.backgroundColor;
       const originalColor = resultSection.style.color;
 
-      // Hide share buttons for screenshot
-      shareButtonsContainer.style.display = 'none';
-
-      // Apply dark mode style explicitly for capture
       resultSection.style.backgroundColor = '#121212';
       resultSection.style.color = '#f0f0f0';
 
       html2canvas(resultSection, { scale: 2 }).then(canvas => {
-        // Restore original styles
+        // Restore styles
         resultSection.style.backgroundColor = originalBg;
         resultSection.style.color = originalColor;
-        shareButtonsContainer.style.display = 'flex';
+        shareButtonsContainer.style.visibility = 'visible';
 
         const link = document.createElement('a');
         link.download = 'ssy-maturity-summary.png';

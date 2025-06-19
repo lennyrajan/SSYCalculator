@@ -162,7 +162,7 @@
         <h2 class="h6">Share your results</h2>
         <a id="whatsappShare" class="btn btn-success me-2" target="_blank" rel="noopener">📱 WhatsApp</a>
         <a id="xShare" class="btn btn-dark me-2" target="_blank" rel="noopener">𝕏 Share</a>
-        <button id="downloadResult" class="btn btn-outline-primary">📥 Download Result</button>
+        <button id="downloadResult" class="btn btn-outline-primary me-2">📥 Download Result</button>
       </div>
     </section>
 
@@ -234,36 +234,24 @@
     const investmentTooltip = document.querySelector('label[for="investmentAmount"] .tooltip-icon');
     let chart;
 
-    // Update tooltip on investment type change
     function updateTooltip() {
       const type = document.querySelector('input[name="investmentType"]:checked').value;
-      if (type === 'monthly') {
-        investmentTooltip.title = "Monthly max ₹12,500";
-      } else {
-        investmentTooltip.title = "Yearly max ₹1,50,000";
-      }
+      investmentTooltip.title = type === 'monthly' ? "Monthly max ₹12,500" : "Yearly max ₹1,50,000";
     }
-    document.querySelectorAll('input[name="investmentType"]').forEach(radio => {
-      radio.addEventListener('change', updateTooltip);
-    });
+    document.querySelectorAll('input[name="investmentType"]').forEach(radio => radio.addEventListener('change', updateTooltip));
     updateTooltip();
 
-    // Theme toggle logic
     themeToggle.addEventListener('click', () => {
       document.body.classList.toggle('light-mode');
       document.body.classList.toggle('dark-mode');
       themeToggle.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
     });
 
-    // FAQ toggle logic
-    faqButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const answer = document.getElementById(btn.getAttribute('aria-controls'));
-        answer.classList.toggle('show');
-      });
-    });
+    faqButtons.forEach(btn => btn.addEventListener('click', () => {
+      const answer = document.getElementById(btn.getAttribute('aria-controls'));
+      answer.classList.toggle('show');
+    }));
 
-    // Calculation and chart logic
     form.addEventListener('submit', (e) => {
       e.preventDefault();
 
@@ -274,7 +262,6 @@
       const startYear = Math.min(2099, Math.max(2000, parseInt(document.getElementById('startYear').value) || new Date().getFullYear()));
       const investmentYears = Math.min(15, Math.max(0, parseInt(document.getElementById('investmentYears').value) || 0));
 
-      // Validate investment amount limits
       const monthlyMax = 12500;
       const yearlyMax = 150000;
       if ((investmentType === 'monthly' && investmentAmountRaw > monthlyMax) ||
@@ -283,14 +270,11 @@
         return;
       }
 
-      // Compute annual investment based on type
       const annualInvestment = investmentType === 'monthly' ? investmentAmountRaw * 12 : investmentAmountRaw;
-
       const maturityYear = startYear + 21;
       const currentYear = new Date().getFullYear();
       const yearsLeft = maturityYear - currentYear;
 
-      // Accumulators
       let total = currentBalance;
       let totalInvested = currentBalance;
       let totalInterest = 0;
@@ -311,7 +295,6 @@
         yearlyInterests.push(totalInterest.toFixed(2));
       }
 
-      // Update summary and detailed results
       summary.textContent = `Estimated maturity amount by ${maturityYear} is ₹${Math.round(total).toLocaleString()}.`;
 
       detailedResults.innerHTML = `
@@ -322,7 +305,6 @@
         <li><strong>Total Maturity Amount:</strong> ₹${Math.round(total).toLocaleString()}</li>
       `;
 
-      // Render chart
       if (chart) chart.destroy();
 
       chart = new Chart(chartCanvas, {
@@ -353,16 +335,13 @@
           plugins: { legend: { position: 'top' } },
           scales: {
             y: {
-              ticks: {
-                callback: value => '₹' + Number(value).toLocaleString()
-              },
+              ticks: { callback: value => '₹' + Number(value).toLocaleString() },
               beginAtZero: true
             }
           }
         }
       });
 
-      // Show share section
       shareSection.style.display = 'block';
 
       const shareText = `SSY Maturity by ${maturityYear}: ₹${Math.round(total).toLocaleString()}`;
@@ -371,26 +350,29 @@
       document.getElementById('whatsappShare').href = `https://wa.me/?text=${encodeURIComponent(shareText)}%20${shareURL}`;
       document.getElementById('xShare').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${shareURL}`;
 
-      // Show results section
       document.getElementById('results').style.display = 'block';
     });
 
-    // Download result button logic with dark mode fix and higher quality
     document.getElementById('downloadResult').addEventListener('click', () => {
       const resultSection = document.getElementById('results');
+      const shareButtonsContainer = document.getElementById('shareSection');
 
       // Save original styles
       const originalBg = resultSection.style.backgroundColor;
       const originalColor = resultSection.style.color;
 
-      // Apply dark mode styles explicitly for capture
+      // Hide share buttons for screenshot
+      shareButtonsContainer.style.display = 'none';
+
+      // Apply dark mode style explicitly for capture
       resultSection.style.backgroundColor = '#121212';
       resultSection.style.color = '#f0f0f0';
 
       html2canvas(resultSection, { scale: 2 }).then(canvas => {
-        // Revert styles
+        // Restore original styles
         resultSection.style.backgroundColor = originalBg;
         resultSection.style.color = originalColor;
+        shareButtonsContainer.style.display = 'flex';
 
         const link = document.createElement('a');
         link.download = 'ssy-maturity-summary.png';

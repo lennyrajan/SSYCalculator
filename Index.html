@@ -1,198 +1,262 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sukanya Samriddhi Yojana (SSY) Maturity Calculator</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding-bottom: 80px;
       transition: background-color 0.3s, color 0.3s;
-    }
-    .dark-mode {
       background-color: #121212;
       color: #f0f0f0;
     }
-    .light-mode {
+    body.light-mode {
       background-color: #f8f9fa;
       color: #212529;
     }
-    .toggle-theme {
+    #themeToggle {
       position: fixed;
       top: 1rem;
       right: 1rem;
       background: none;
       border: none;
-      font-size: 1.5rem;
+      font-size: 1.7rem;
       cursor: pointer;
+      color: #ff6600;
+      z-index: 1000;
+    }
+    .container {
+      max-width: 600px;
+      padding: 1rem 1.5rem 4rem 1.5rem;
+      margin: auto;
+    }
+    label span.tooltip-icon {
+      margin-left: 6px;
+      color: #ff6600;
+      cursor: help;
+      font-weight: 700;
+    }
+.faq-item button {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: inherit;
+      border-bottom: 1px solid #ccc;
+      transition: background-color 0.3s;
+    }
+    .faq-answer {
+      display: none;
+      padding: 0 0.75rem 0.75rem;
+      border-left: 3px solid #ff6600;
+    }
+    .faq-answer.show {
+      display: block;
+    }
+    #shareSection {
+      margin-top: 1.5rem;
+      display: none;
     }
     footer {
       position: fixed;
       bottom: 0;
       width: 100%;
       text-align: center;
-      padding: 0.5rem;
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-    .faq-item button {
-      width: 100%;
-      text-align: left;
-      background: none;
-      border: none;
-      padding: 0.75rem;
+      padding: 0.5rem 0;
+      background-color: rgba(255, 102, 0, 0.15);
+      color: #ff6600;
       font-weight: 600;
-      cursor: pointer;
-    }
-    .faq-answer {
-      display: none;
-      padding: 0 0.75rem 0.75rem;
-    }
-    .faq-answer.show {
-      display: block;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body class="dark-mode">
-  <button class="toggle-theme" id="themeToggle" title="Toggle Theme">🌙</button>
-  <div class="container py-4">
-    <h1 class="text-center mb-4">Sukanya Samriddhi Yojana (SSY) Maturity Calculator</h1><form id="ssyForm">
-  <div class="mb-3">
-    <label for="currentBalance" class="form-label">Current Balance (₹)</label>
-    <input type="number" class="form-control" id="currentBalance" min="0" value="0">
-  </div>
+  <button id="themeToggle" title="Toggle theme">🌙</button>
+  <main class="container">
+    <h1 class="text-center mb-4">Sukanya Samriddhi Yojana (SSY) Maturity Calculator</h1>
 
-  <div class="mb-3">
-    <label class="form-label">Investment Type</label><br>
-    <div class="form-check form-check-inline">
-      <input class="form-check-input" type="radio" name="investmentType" id="monthly" value="monthly" checked>
-      <label class="form-check-label" for="monthly">Monthly</label>
-    </div>
-    <div class="form-check form-check-inline">
-      <input class="form-check-input" type="radio" name="investmentType" id="yearly" value="yearly">
-      <label class="form-check-label" for="yearly">Yearly</label>
-    </div>
-  </div>
+    <form id="ssyForm">
+      <div class="mb-3">
+        <label for="currentBalance" class="form-label">
+          Current Balance (₹)
+          <span class="tooltip-icon" title="Existing amount in the account">🛈</span>
+        </label>
+        <input type="number" id="currentBalance" class="form-control" min="0" value="0" />
+      </div>
+      <fieldset class="mb-3">
+        <legend class="form-label">Investment Type</legend>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="investmentType" id="monthly" value="monthly" checked>
+          <label class="form-check-label" for="monthly">Monthly</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="investmentType" id="yearly" value="yearly">
+          <label class="form-check-label" for="yearly">Yearly</label>
+        </div>
+      </fieldset>
+      <div class="mb-3">
+        <label for="investmentAmount" class="form-label">
+          Investment Amount (₹)
+          <span class="tooltip-icon" title="Monthly max ₹12,500, Yearly max ₹1,50,000">🛈</span>
+        </label>
+        <input type="number" id="investmentAmount" class="form-control" min="0" />
+      </div>
+      <div class="mb-3">
+        <label for="startYear" class="form-label">Account Start Year</label>
+        <input type="number" id="startYear" class="form-control" min="2000" max="2099" value="2020" />
+      </div>
 
-  <div class="mb-3">
-    <label for="investmentAmount" class="form-label">Investment Amount (₹)</label>
-    <input type="number" class="form-control" id="investmentAmount" min="0">
-  </div>
+      <div class="mb-3">
+        <label for="investmentYears" class="form-label">Years to Invest (Max 15)</label>
+        <input type="number" id="investmentYears" class="form-control" min="0" max="15" value="15" />
+      </div>
+      <div class="mb-3">
+        <label for="interestRate" class="form-label">Interest Rate (%)</label>
+        <input type="number" id="interestRate" class="form-control" step="0.01" value="8.2" />
+      </div>
+      <div class="mb-3">
+        <label for="yearsLeft" class="form-label">Years Left to Maturity</label>
+        <input type="number" id="yearsLeft" class="form-control" readonly disabled />
+      </div>
+      <div class="mb-3">
+        <label for="maturityYear" class="form-label">Maturity Year</label>
+        <input type="number" id="maturityYear" class="form-control" readonly disabled />
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Calculate</button>
+    </form>
 
-  <div class="mb-3">
-    <label for="startYear" class="form-label">Account Start Year</label>
-    <input type="number" class="form-control" id="startYear" min="2000" max="2099" value="2020">
-  </div>
+    <section id="results" class="mt-4" style="display:none;">
+      <h2 class="h5">Results</h2>
+      <p id="summary" aria-live="polite"></p>
+      <canvas id="growthChart" height="120"></canvas>
 
-  <div class="mb-3">
-    <label for="investmentYears" class="form-label">Years to Invest (0–15)</label>
-    <input type="number" class="form-control" id="investmentYears" min="0" max="15" value="15">
-  </div>
+      <div id="shareSection" class="mt-4">
+        <h2 class="h6">Share your results</h2>
+        <a id="whatsappShare" class="btn btn-success me-2" target="_blank">📱 WhatsApp</a>
+        <a id="xShare" class="btn btn-dark" target="_blank">𝕏 Share</a>
+      </div>
+    </section>
 
-  <div class="mb-3">
-    <label for="yearsLeft" class="form-label">Years Left to Maturity</label>
-    <input type="number" class="form-control" id="yearsLeft" min="1" max="21" value="21">
-  </div>
+    <section class="mt-5" aria-label="Frequently Asked Questions">
+      <h2 class="h5 mb-3">FAQs</h2>
+      <div class="faq-item">
+        <button aria-controls="faq1" type="button">What is SSY?</button>
+        <div id="faq1" class="faq-answer">A savings scheme for girl child's future with tax benefits.</div>
+      </div>
+      <div class="faq-item">
+        <button aria-controls="faq2" type="button">What is the maturity period?</button>
+        <div id="faq2" class="faq-answer">21 years from the account opening year.</div>
+      </div>
+      <div class="faq-item">
+        <button aria-controls="faq3" type="button">How long can I invest?</button>
+        <div id="faq3" class="faq-answer">Up to 15 years from the start year.</div>
+      </div>
+      <div class="faq-item">
+        <button aria-controls="faq4" type="button">Can I choose monthly or yearly deposits?</button>
+        <div id="faq4" class="faq-answer">Yes, this tool supports both.</div>
+      </div>
+    </section>
+  </main>
 
-  <div class="mb-3">
-    <label for="interestRate" class="form-label">Interest Rate (%)</label>
-    <input type="number" class="form-control" id="interestRate" step="0.01" value="8.2">
-  </div>
+  <footer>Made with ☕ by Lenny Rajan</footer>
 
-  <button type="submit" class="btn btn-primary">Calculate</button>
-</form>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<div id="results" class="mt-4" style="display:none;">
-  <h2 class="h5">Results</h2>
-  <p id="summary"></p>
-  <canvas id="growthChart" height="100"></canvas>
-</div>
-
-<div class="mt-5">
-  <h2 class="h5">FAQs</h2>
-  <div class="faq-item">
-    <button type="button">What is SSY?</button>
-    <div class="faq-answer">A government-backed savings scheme for girl child education and marriage.</div>
-  </div>
-  <div class="faq-item">
-    <button type="button">How long does the SSY account mature?</button>
-    <div class="faq-answer">21 years from the account opening year.</div>
-  </div>
-  <div class="faq-item">
-    <button type="button">Can I invest monthly or yearly?</button>
-    <div class="faq-answer">Yes, both are supported in this calculator.</div>
-  </div>
-</div>
-
-  </div>  <footer>Made with ☕ by Lenny Rajan</footer>  <script>
+  <script>
     const form = document.getElementById('ssyForm');
-    const resultDiv = document.getElementById('results');
     const summary = document.getElementById('summary');
     const chartCanvas = document.getElementById('growthChart');
+    const shareSection = document.getElementById('shareSection');
+    const faqButtons = document.querySelectorAll('.faq-item button');
+    const themeToggle = document.getElementById('themeToggle');
+
     let chart;
 
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const current = parseFloat(document.getElementById('currentBalance').value);
-      const type = document.querySelector('input[name="investmentType"]:checked').value;
-      const amount = parseFloat(document.getElementById('investmentAmount').value);
-      const startYear = parseInt(document.getElementById('startYear').value);
-      const yearsInvest = parseInt(document.getElementById('investmentYears').value);
-      const yearsLeft = parseInt(document.getElementById('yearsLeft').value);
-      const rate = parseFloat(document.getElementById('interestRate').value);
-
-      let data = [], balance = current, totalInvested = current;
-      for (let i = 0; i < yearsLeft; i++) {
-        let invest = (i < yearsInvest) ? (type === 'monthly' ? amount * 12 : amount) : 0;
-        totalInvested += invest;
-        balance += invest;
-        let interest = balance * (rate / 100);
-        balance += interest;
-        data.push({ year: startYear + i, balance: balance.toFixed(2) });
-      }
-
-      summary.textContent = `Maturity Amount: ₹${balance.toFixed(2)} | Total Invested: ₹${totalInvested.toFixed(2)} | Interest Earned: ₹${(balance - totalInvested).toFixed(2)}`;
-      resultDiv.style.display = 'block';
-
-      if (chart) chart.destroy();
-      chart = new Chart(chartCanvas, {
-        type: 'line',
-        data: {
-          labels: data.map(d => d.year),
-          datasets: [{
-            label: 'Yearly Balance',
-            data: data.map(d => d.balance),
-            borderColor: '#007bff',
-            backgroundColor: 'rgba(0,123,255,0.1)',
-            fill: true,
-          }]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: false
-            }
-          }
-        }
-      });
-    });
-
-    document.querySelectorAll('.faq-item button').forEach((btn, i) => {
-      btn.addEventListener('click', () => {
-        const answer = btn.nextElementSibling;
-        answer.classList.toggle('show');
-      });
-    });
-
-    const themeToggle = document.getElementById('themeToggle');
     themeToggle.addEventListener('click', () => {
       document.body.classList.toggle('light-mode');
       document.body.classList.toggle('dark-mode');
       themeToggle.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
     });
-  </script></body>
+
+    faqButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const answer = document.getElementById(btn.getAttribute('aria-controls'));
+        answer.classList.toggle('show');
+      });
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const currentBalance = parseFloat(document.getElementById('currentBalance').value) || 0;
+      const investmentAmount = parseFloat(document.getElementById('investmentAmount').value) || 0;
+      const investmentType = document.querySelector('input[name="investmentType"]:checked').value;
+      const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+      const startYear = parseInt(document.getElementById('startYear').value) || new Date().getFullYear();
+      const investmentYears = parseInt(document.getElementById('investmentYears').value) || 0;
+
+      const maturityYear = startYear + 21;
+      const yearsLeft = maturityYear - new Date().getFullYear();
+      document.getElementById('yearsLeft').value = yearsLeft;
+      document.getElementById('maturityYear').value = maturityYear;
+
+      const annualInvestment = investmentType === 'monthly' ? investmentAmount * 12 : investmentAmount;
+      let total = currentBalance;
+      const yearlyData = [];
+
+      for (let i = 0; i < 21; i++) {
+        if (i < investmentYears) {
+          total += annualInvestment;
+        }
+        total += (total * interestRate) / 100;
+        yearlyData.push({ year: startYear + i, balance: total.toFixed(2) });
+      }
+
+      summary.textContent = `Estimated maturity amount by ${maturityYear} is ₹${Math.round(total).toLocaleString()}.`;
+
+      if (chart) chart.destroy();
+      chart = new Chart(chartCanvas, {
+        type: 'line',
+        data: {
+          labels: yearlyData.map(d => d.year),
+          datasets: [{
+            label: 'Projected Balance (₹)',
+            data: yearlyData.map(d => d.balance),
+            borderColor: '#ff6600',
+            backgroundColor: 'rgba(255, 102, 0, 0.2)',
+            tension: 0.2
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              ticks: {
+                callback: value => '₹' + Number(value).toLocaleString()
+              }
+            }
+          }
+        }
+      });
+
+      shareSection.style.display = 'block';
+      const shareText = `SSY Maturity by ${maturityYear}: ₹${Math.round(total).toLocaleString()}`;
+      const shareURL = encodeURIComponent(window.location.href);
+
+      document.getElementById('whatsappShare').href = `https://wa.me/?text=${encodeURIComponent(shareText)}%20${shareURL}`;
+      document.getElementById('xShare').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${shareURL}`;
+
+      document.getElementById('results').style.display = 'block';
+    });
+  </script>
+</body>
 </html>
+    

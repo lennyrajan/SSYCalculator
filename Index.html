@@ -38,8 +38,30 @@
     label span.tooltip-icon {
       margin-left: 6px;
       color: #ff6600;
-      cursor: help;
+      cursor: pointer;
       font-weight: 700;
+      position: relative;
+      display: inline-block;
+    }
+    label span.tooltip-icon:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: #fff;
+      padding: 6px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      font-size: 0.85rem;
+      opacity: 1;
+      pointer-events: none;
+      z-index: 100;
+    }
+    label span.tooltip-icon::after {
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
     .faq-item button {
       width: 100%;
@@ -86,7 +108,7 @@
       <div class="mb-3">
         <label for="currentBalance" class="form-label">
           Current Balance (₹)
-          <span class="tooltip-icon" title="Existing amount in the account">🛈</span>
+          <span class="tooltip-icon" title="Existing amount in the account">ⓘ</span>
         </label>
         <input type="number" id="currentBalance" class="form-control" min="0" value="0" required />
       </div>
@@ -94,7 +116,7 @@
       <div class="mb-3">
         <label for="investmentAmount" class="form-label">
           Investment Amount (₹)
-          <span class="tooltip-icon" id="investmentTooltip" title="Monthly max ₹12,500, Yearly max ₹1,50,000">🛈</span>
+          <span class="tooltip-icon" title="Monthly max ₹12,500, Yearly max ₹1,50,000">ⓘ</span>
         </label>
         <input type="number" id="investmentAmount" class="form-control" min="0" required />
       </div>
@@ -207,7 +229,7 @@
     const shareSection = document.getElementById('shareSection');
     const faqButtons = document.querySelectorAll('.faq-item button');
     const themeToggle = document.getElementById('themeToggle');
-    const investmentTooltip = document.getElementById('investmentTooltip');
+    const investmentTooltip = document.querySelector('label[for="investmentAmount"] .tooltip-icon');
     let chart;
 
     // Update tooltip on investment type change

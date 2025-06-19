@@ -97,15 +97,21 @@
       min-width: 100px;
       text-align: center;
     }
-    footer {
+    /* Footer styling for subtle, minimal look */
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
   text-align: center;
   padding: 0.5rem 0;
-  background-color: rgba(255, 102, 0, 0.15);
-  color: #ff6600;
+  background-color: transparent; /* no background color */
+  color: #aaa; /* subtle gray text */
   font-weight: 600;
   font-size: 0.9rem;
-  margin-top: 2rem;
-    }
+  user-select: none;
+  z-index: 100;
+  pointer-events: none; /* so it doesn't interfere with clicks */
+}
   </style>
 </head>
 <body class="dark-mode">

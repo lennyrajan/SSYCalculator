@@ -323,102 +323,172 @@ if (investmentType === 'yearly' && investmentAmount > yearlyMax) {
 
       const annualInvestment = investmentType === 'monthly' ? investmentAmount * 12 : investmentAmount;
       const maturityYear = startYear + 21;
-      const yearsLeft = maturityYear - new Date().getFullYear();
+<script>
+  const form = document.getElementById('ssyForm');
+  const summary = document.getElementById('summary');
+  const detailedResults = document.getElementById('detailedResults');
+  const chartCanvas = document.getElementById('growthChart');
+  const shareSection = document.getElementById('shareSection');
+  const faqButtons = document.querySelectorAll('.faq-item button');
+  const themeToggle = document.getElementById('themeToggle');
+  const investmentTooltip = document.querySelector('label[for="investmentAmount"] .tooltip-icon');
+  const downloadBtn = document.getElementById('downloadBtn');
+  let chart;
 
-      let total = currentBalance;
-      let totalInvested = currentBalance;
-      let totalInterest = 0;
+  // Visitor counter
+  const visitorKey = 'ssy_fake_visitor_count';
+  let count = parseInt(localStorage.getItem(visitorKey)) || 3073;
+  const randomIncrement = Math.floor(Math.random() * 3) + 1;
+  count += randomIncrement;
+  document.getElementById('fakeVisitorCount').innerText = 'Visitors: ' + count.toLocaleString();
+  localStorage.setItem(visitorKey, count);
 
-      const yearlyBalances = [];
-      const yearlyInterests = [];
+  // Tooltip update
+  function updateTooltip() {
+    const type = document.querySelector('input[name="investmentType"]:checked').value;
+    investmentTooltip.title = type === 'monthly'
+      ? "Monthly max ₹12,500"
+      : "Yearly max ₹1,50,000";
+  }
+  document.querySelectorAll('input[name="investmentType"]').forEach(radio => {
+    radio.addEventListener('change', updateTooltip);
+  });
+  updateTooltip();
 
-      for (let i = 0; i < 21; i++) {
-        if (i < investmentYears) {
-          total += annualInvestment;
-          totalInvested += annualInvestment;
-        }
-        const interest = total * (interestRate / 100);
-        total += interest;
-        totalInterest += interest;
+  // Theme toggle
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('light-mode');
+    document.body.classList.toggle('dark-mode');
+    themeToggle.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+  });
 
-        yearlyBalances.push(total.toFixed(2));
-        yearlyInterests.push(totalInterest.toFixed(2));
+  // FAQ toggle
+  faqButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const answer = document.getElementById(btn.getAttribute('aria-controls'));
+      answer.classList.toggle('show');
+    });
+  });
+
+  // Form submission
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const currentBalance = parseFloat(document.getElementById('currentBalance').value) || 0;
+    const investmentAmount = parseFloat(document.getElementById('investmentAmount').value) || 0;
+    const investmentType = document.querySelector('input[name="investmentType"]:checked').value;
+    const startYear = parseInt(document.getElementById('startYear').value);
+    const investmentYears = parseInt(document.getElementById('investmentYears').value);
+    const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+
+    const monthlyMax = 12500;
+    const yearlyMax = 150000;
+    if (investmentType === 'monthly' && investmentAmount > monthlyMax) {
+      alert('For monthly investments, the maximum allowed is ₹12,500.');
+      return;
+    }
+    if (investmentType === 'yearly' && investmentAmount > yearlyMax) {
+      alert('For yearly investments, the maximum allowed is ₹1,50,000.');
+      return;
+    }
+
+    const annualInvestment = investmentType === 'monthly' ? investmentAmount * 12 : investmentAmount;
+    const maturityYear = startYear + 21;
+    const yearsLeft = maturityYear - new Date().getFullYear();
+
+    let total = currentBalance;
+    let totalInvested = currentBalance;
+    let totalInterest = 0;
+    const yearlyBalances = [];
+    const yearlyInterests = [];
+
+    for (let i = 0; i < 21; i++) {
+      if (i < investmentYears) {
+        total += annualInvestment;
+        totalInvested += annualInvestment;
       }
+      const interest = total * (interestRate / 100);
+      total += interest;
+      totalInterest += interest;
 
-      summary.textContent = `Estimated maturity amount by ${maturityYear} is ₹${Math.round(total).toLocaleString()}.`;
+      yearlyBalances.push(total.toFixed(2));
+      yearlyInterests.push(totalInterest.toFixed(2));
+    }
 
-      detailedResults.innerHTML = `
-        <li><strong>Years Left to Maturity:</strong> ${yearsLeft > 0 ? yearsLeft : 0}</li>
-        <li><strong>Maturity Year:</strong> ${maturityYear}</li>
-        <li><strong>Total Invested Amount:</strong> ₹${Math.round(totalInvested).toLocaleString()}</li>
-        <li><strong>Total Interest Earned:</strong> ₹${Math.round(totalInterest).toLocaleString()}</li>
-        <li><strong>Total Maturity Amount:</strong> ₹${Math.round(total).toLocaleString()}</li>
-      `;
+    summary.textContent = `Estimated maturity amount by ${maturityYear} is ₹${Math.round(total).toLocaleString()}.`;
+    detailedResults.innerHTML = `
+      <li><strong>Years Left to Maturity:</strong> ${yearsLeft > 0 ? yearsLeft : 0}</li>
+      <li><strong>Maturity Year:</strong> ${maturityYear}</li>
+      <li><strong>Total Invested Amount:</strong> ₹${Math.round(totalInvested).toLocaleString()}</li>
+      <li><strong>Total Interest Earned:</strong> ₹${Math.round(totalInterest).toLocaleString()}</li>
+      <li><strong>Total Maturity Amount:</strong> ₹${Math.round(total).toLocaleString()}</li>
+    `;
 
-      if (chart) chart.destroy();
-
-      chart = new Chart(chartCanvas, {
-        type: 'line',
-        data: {
-          labels: Array.from({ length: 21 }, (_, i) => startYear + i),
-          datasets: [
-            {
-              label: 'Total Balance (₹)',
-              data: yearlyBalances,
-              borderColor: '#ff6600',
-              backgroundColor: 'rgba(255, 102, 0, 0.2)',
-              fill: true,
-              tension: 0.3,
+    if (chart) chart.destroy();
+    chart = new Chart(chartCanvas, {
+      type: 'line',
+      data: {
+        labels: Array.from({ length: 21 }, (_, i) => startYear + i),
+        datasets: [
+          {
+            label: 'Total Balance (₹)',
+            data: yearlyBalances,
+            borderColor: '#ff6600',
+            backgroundColor: 'rgba(255, 102, 0, 0.2)',
+            fill: true,
+            tension: 0.3,
+          },
+          {
+            label: 'Interest Earned (₹)',
+            data: yearlyInterests,
+            borderColor: '#007bff',
+            backgroundColor: 'rgba(0, 123, 255, 0.2)',
+            fill: true,
+            tension: 0.3,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'top' } },
+        scales: {
+          y: {
+            ticks: {
+              callback: value => '₹' + Number(value).toLocaleString()
             },
-            {
-              label: 'Interest Earned (₹)',
-              data: yearlyInterests,
-              borderColor: '#007bff',
-              backgroundColor: 'rgba(0, 123, 255, 0.2)',
-              fill: true,
-              tension: 0.3,
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { position: 'top' } },
-          scales: {
-            y: {
-              ticks: {
-                callback: value => '₹' + Number(value).toLocaleString()
-              },
-              beginAtZero: true
-            }
+            beginAtZero: true
           }
         }
-      });
-const investmentAmountRaw = Math.max(0, parseFloat(document.getElementById('investmentAmount').value) || 0);
-shareSection.style.display = 'block';
-
-const readableInvestmentType = investmentType === 'monthly' ? 'monthly' : 'yearly';
-const shareText = 
-  `With a current balance of ₹${Math.round(currentBalance).toLocaleString()} and investing ₹${Math.round(investmentAmountRaw).toLocaleString()} ${readableInvestmentType} from ${startYear},\n` +
-  `my Sukanya Samriddhi Yojana account is expected to mature in ${maturityYear}.\n\n` +
-  `• Years left to maturity: ${yearsLeft > 0 ? yearsLeft : 0}\n` +
-  `• Total Invested Amount: ₹${Math.round(totalInvested).toLocaleString()}\n` +
-  `• Total Interest Earned: ₹${Math.round(totalInterest).toLocaleString()}\n` +
-  `• Total Maturity Amount: ₹${Math.round(total).toLocaleString()}\n\n` +
-  `Calculated at `;
-
-const shareURL = encodeURIComponent(window.location.href);
-      document.getElementById('whatsappShare').href = `https://wa.me/?text=${encodeURIComponent(shareText)}%20${shareURL}`;
-      document.getElementById('xShare').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${shareURL}`;
-
-      document.getElementById('results').style.display = 'block';
+      }
     });
 
-    // Download results image
-    downloadBtn.addEventListener('click', () => {
-      const shareBtns = shareSection.querySelectorAll('a, button');
-      shareBtns.forEach(btn => btn.style.display = 'none');
+    // Share section
+    const readableType = investmentType === 'monthly' ? 'monthly' : 'yearly';
+    const shareText = 
+      `With a current balance of ₹${Math.round(currentBalance).toLocaleString()} and investing ₹${Math.round(investmentAmount).toLocaleString()} ${readableType} from ${startYear},\n` +
+      `my Sukanya Samriddhi Yojana account is expected to mature in ${maturityYear}.\n\n` +
+      `• Years left to maturity: ${yearsLeft > 0 ? yearsLeft : 0}\n` +
+      `• Total Invested Amount: ₹${Math.round(totalInvested).toLocaleString()}\n` +
+      `• Total Interest Earned: ₹${Math.round(totalInterest).toLocaleString()}\n` +
+      `• Total Maturity Amount: ₹${Math.round(total).toLocaleString()}\n\n` +
+      `Calculated at https://sukanyasamriddhicalculator.netlify.app`;
 
-      import('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js').then(({ default: html2canvas }) => {
+    document.getElementById('whatsappShare').href =
+      `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+    document.getElementById('xShare').href =
+      `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+
+    shareSection.style.display = 'block';
+    document.getElementById('results').style.display = 'block';
+  });
+
+  // Download as image
+  downloadBtn.addEventListener('click', () => {
+    const shareBtns = shareSection.querySelectorAll('a, button');
+    shareBtns.forEach(btn => btn.style.display = 'none');
+
+    import('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js')
+      .then(({ default: html2canvas }) => {
         html2canvas(document.getElementById('results')).then(canvas => {
           shareBtns.forEach(btn => btn.style.display = '');
           const link = document.createElement('a');
@@ -426,11 +496,12 @@ const shareURL = encodeURIComponent(window.location.href);
           link.href = canvas.toDataURL('image/png');
           link.click();
         });
-      }).catch(() => {
-        alert('Download failed');
+      })
+      .catch(() => {
+        alert('Download failed.');
         shareBtns.forEach(btn => btn.style.display = '');
       });
-    });
-  </script>
+  });
+</script>
 </body>
 </html>

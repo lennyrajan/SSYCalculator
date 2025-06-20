@@ -305,6 +305,18 @@ footer {
       const currentBalance = parseFloat(document.getElementById('currentBalance').value) || 0;
       const investmentAmount = parseFloat(document.getElementById('investmentAmount').value) || 0;
       const investmentType = document.querySelector('input[name="investmentType"]:checked').value;
+      const monthlyMax = 12500;
+const yearlyMax = 150000;
+
+if (investmentType === 'monthly' && investmentAmount > monthlyMax) {
+  alert('For monthly investments, the maximum allowed is ₹12,500.');
+  return;
+}
+
+if (investmentType === 'yearly' && investmentAmount > yearlyMax) {
+  alert('For yearly investments, the maximum allowed is ₹1,50,000.');
+  return;
+}
       const startYear = parseInt(document.getElementById('startYear').value);
       const investmentYears = parseInt(document.getElementById('investmentYears').value);
       const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;

@@ -117,6 +117,8 @@ footer {
       margin-left: 0.5rem;
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  
 </head>
 <body class="dark-mode">
   <button id="themeToggle" title="Toggle theme">🌙</button>
@@ -418,18 +420,16 @@ const shareURL = encodeURIComponent(window.location.href);
       const shareBtns = shareSection.querySelectorAll('a, button');
       shareBtns.forEach(btn => btn.style.display = 'none');
 
-      import('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js').then(({ default: html2canvas }) => {
-        html2canvas(document.getElementById('results')).then(canvas => {
-          shareBtns.forEach(btn => btn.style.display = '');
-          const link = document.createElement('a');
-          link.download = 'ssy_maturity_results.png';
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-        });
-      }).catch(() => {
-        alert('Download failed');
-        shareBtns.forEach(btn => btn.style.display = '');
-      });
+      html2canvas(document.getElementById('results')).then(canvas => {
+  shareBtns.forEach(btn => btn.style.display = '');
+  const link = document.createElement('a');
+  link.download = 'ssy_maturity_results.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}).catch(() => {
+  alert('Download failed');
+  shareBtns.forEach(btn => btn.style.display = '');
+});
     });
   </script>
 </body>

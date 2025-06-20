@@ -404,7 +404,7 @@ const shareText =
   `• Total Invested Amount: ₹${Math.round(totalInvested).toLocaleString()}\n` +
   `• Total Interest Earned: ₹${Math.round(totalInterest).toLocaleString()}\n` +
   `• Total Maturity Amount: ₹${Math.round(total).toLocaleString()}\n\n` +
-  `Calculated at sukanyasamriddhicalculator.netlify.app`;
+  `Calculated at `;
 
 const shareURL = encodeURIComponent(window.location.href);
       document.getElementById('whatsappShare').href = `https://wa.me/?text=${encodeURIComponent(shareText)}%20${shareURL}`;

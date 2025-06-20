@@ -116,6 +116,14 @@ footer {
     #downloadBtn {
       margin-left: 0.5rem;
     }
+    .ssy-description {
+  font-size: 1rem;
+  color: #ccc; /* dark mode default */
+}
+
+body.light-mode .ssy-description {
+  color: #333; /* more readable for light background */
+}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   
@@ -124,8 +132,8 @@ footer {
   <button id="themeToggle" title="Toggle theme">🌙</button>
   <main class="container">
     <h1 class="text-center mb-4">Sukanya Samriddhi Yojana (SSY) Maturity Calculator</h1>
-    <p class="text-center mb-4" style="font-size: 1rem; color: #ccc;">
-  Use this free Sukanya Samriddhi Yojana (SSY) Maturity Calculator to estimate the total maturity amount based on your current balance, yearly or monthly contributions, interest rate, and investment duration. Get a clear view of your savings growth over 21 years.
+    <p class="text-center mb-4 ssy-description">
+      Use this free Sukanya Samriddhi Yojana (SSY) Maturity Calculator to estimate the total maturity amount based on your current balance, yearly or monthly contributions, interest rate, and investment duration. Get a clear view of your savings growth over 21 years.
     </p>
 
     <form id="ssyForm" novalidate>

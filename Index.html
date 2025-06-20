@@ -395,9 +395,15 @@ if (investmentType === 'yearly' && investmentAmount > yearlyMax) {
       });
 
       shareSection.style.display = 'block';
-
-      const shareText = `SSY Maturity by ${maturityYear}: ₹${Math.round(total).toLocaleString()}`;
-      const shareURL = encodeURIComponent(window.location.href);
+const shareText = 
+  `My SSY account is set to mature in ${maturityYear}.\n\n` +
+  `• Years left to maturity: ${yearsLeft > 0 ? yearsLeft : 0}\n` +
+  `• Maturity Year: ${maturityYear}\n` +
+  `• Total Invested Amount: ₹${Math.round(totalInvested).toLocaleString()}\n` +
+  `• Total Interest Earned: ₹${Math.round(totalInterest).toLocaleString()}\n` +
+  `• Total Maturity Amount: ₹${Math.round(total).toLocaleString()}\n\n` +
+  `Calculated at sukanyasamriddhicalculator.netlify.app`;
+           const shareURL = encodeURIComponent(window.location.href);
 
       document.getElementById('whatsappShare').href = `https://wa.me/?text=${encodeURIComponent(shareText)}%20${shareURL}`;
       document.getElementById('xShare').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${shareURL}`;

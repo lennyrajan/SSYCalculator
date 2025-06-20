@@ -393,7 +393,7 @@ if (investmentType === 'yearly' && investmentAmount > yearlyMax) {
           }
         }
       });
-
+const investmentAmountRaw = Math.max(0, parseFloat(document.getElementById('investmentAmount').value) || 0);
 shareSection.style.display = 'block';
 
 const readableInvestmentType = investmentType === 'monthly' ? 'monthly' : 'yearly';

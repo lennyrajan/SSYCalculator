@@ -406,7 +406,7 @@ const shareText =
   `• Total Maturity Amount: ₹${Math.round(total).toLocaleString()}\n\n` +
   `Calculated at sukanyasamriddhicalculator.netlify.app`;
 
-const shareURL = encodeURIComponent(window.location.href);
+//const shareURL = encodeURIComponent(window.location.href);
       document.getElementById('whatsappShare').href = `https://wa.me/?text=${encodeURIComponent(shareText)}%20${shareURL}`;
       document.getElementById('xShare').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${shareURL}`;
 
